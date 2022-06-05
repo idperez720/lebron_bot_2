@@ -1,0 +1,4 @@
+int32 group_number
+string robot_name
+---
+pickup_service_answer answer

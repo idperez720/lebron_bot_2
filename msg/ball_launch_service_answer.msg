@@ -1,0 +1,4 @@
+string ball_color
+int32 launch_zone
+float32 launch_zone_X
+float32 launch_zone_Y
