@@ -115,7 +115,10 @@ def detector(color_to_detect):
                     if cv2.contourArea(cont) > 500:
                         x, y, w ,h  = cv2.boundingRect(cont)
                         if h > 50 and w > 50:
+                            # TODO: Mover el brazo
                             print(f'x={x}, y={y}')
+                            if x <= 140 and x > 100 and y <= 140 and y > 100:
+                                print("Para")
                             cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 0, 255), 3)
         
         elif color_to_detect == "Y" or color_to_detect == "YELLOW" or "AMARILLO":
@@ -127,7 +130,10 @@ def detector(color_to_detect):
                     if cv2.contourArea(cont) > 500:
                         x, y, w ,h  = cv2.boundingRect(cont)
                         if h > 50 and w > 50:
+                             # TODO: Mover el brazo
                             print(f'x={x}, y={y}')
+                            if x <= 140 and x > 100 and y <= 140 and y > 100:
+                                print("Para")
                             cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 255), 3)
         else:
             # Detect Contours
@@ -138,6 +144,7 @@ def detector(color_to_detect):
                     if cv2.contourArea(cont) > 500:
                         x, y, w ,h  = cv2.boundingRect(cont)
                         if h > 50 and w > 50:
+                             # TODO: Mover el brazo
                             print(f'x={x}, y={y}')
                             cv2.rectangle(frame, (x,y), (x+w, y+h), (255, 0, 0), 3)
 ################################################################
@@ -170,7 +177,7 @@ if __name__ == '__main__':
     rospy.sleep(5)
 
     # Solicito el servicio de recoger bolita
-    #print(ball_service_client('ready_to_pick'))
+    print(ball_service_client('ready_to_pick'))
 
     # Espero 5 Segundos tiempo
     #rospy.sleep(5)
