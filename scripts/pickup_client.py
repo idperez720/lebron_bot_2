@@ -125,15 +125,17 @@ def detector(color_to_detect):
         if color_to_detect == "R" or color_to_detect == "RED" or color_to_detect == "ROJO":
             # Detect Contours
             cnts_red, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            
+            rospy.sleep(1)
             if len(cnts_red) != 0:
                 for cont in cnts_red:
                     if cv2.contourArea(cont) > 500:
                         x, y, w ,h  = cv2.boundingRect(cont)
                         if h > 50 and w > 50:
                             # TODO: Mover el brazo
+                            moveMotor('d',1,0,0,0,5)
                             print(f'x={x}, y={y}')
                             if x <= 140 and x > 100 and y <= 140 and y > 100:
+                                
                                 print("Para")
                                 Escanear=False
                             cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 0, 255), 3)
