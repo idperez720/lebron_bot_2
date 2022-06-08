@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import rospy
 import sys
-import time
+
 
 import RPi.GPIO as GPIO
 
@@ -226,14 +226,14 @@ def callback_move(comando,o,p,k,h):
         Giro_Favor_Motor_B() 
         pwm_a.ChangeDutyCycle(PWM_LinA)
         pwm_b.ChangeDutyCycle(PWM_LinB)
-        time.sleep(0.5)
+        rospy.sleep(0.5)
 
     elif comando=='w':
         Giro_Contra_Motor_B()
         Giro_Contra_Motor_A()
         pwm_a.ChangeDutyCycle(o)
         pwm_b.ChangeDutyCycle(p)
-        time.sleep(0.2)
+        rospy.sleep(0.2)
 
     
     elif comando=='d':
@@ -242,7 +242,7 @@ def callback_move(comando,o,p,k,h):
         Giro_Contra_Motor_A()
         pwm_a.ChangeDutyCycle(PWM_Ang)
         pwm_b.ChangeDutyCycle(PWM_Ang)
-        time.sleep(h)
+        rospy.sleep(h)
 
 
 
@@ -251,12 +251,12 @@ def callback_move(comando,o,p,k,h):
         Giro_Favor_Motor_A()
         pwm_a.ChangeDutyCycle(PWM_Ang)
         pwm_b.ChangeDutyCycle(PWM_Ang)
-        time.sleep(k)
+        rospy.sleep(k)
 
     else:
         pwm_a.ChangeDutyCycle(0)
         pwm_b.ChangeDutyCycle(0)
-        time.sleep(0.5)
+        rospy.sleep(0.5)
         
 
 
