@@ -140,7 +140,7 @@ def detector(color_to_detect):
                                 Escanear=False
                             cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 0, 255), 3)
         
-        elif color_to_detect == "Y" or color_to_detect == "YELLOW" or "AMARILLO":
+        elif color_to_detect == "Y" or color_to_detect == "YELLOW" or color_to_detect == "AMARILLO":
             # Detect Contours
             cnts_yellow, _ = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             
