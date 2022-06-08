@@ -33,7 +33,7 @@ def pickup_service_client(group_number, robot_name):
             # TODO: ejecutar codigo de navegación
 
             # IMPORTANTE!!! NO SALIR DE AQUI HASTA ESTAR SEGURO DE ESTAR EN LA ZONA DE RECOGIDA
-            xt='w,x,w,x,w,x,w,x,w,x,w,x,w,x,a,x,a,x,w,x,w,x,w,x,w,x,w,x,a,x,w,x,w,x,w,x,w,x,w,x,d,x,w,x,w,x,w,x,w'
+            txt='w,x,w,x,w,x,w,x,w,x,w,x,w,x,a,x,a,x,w,x,w,x,w,x,w,x,w,x,a,x,w,x,w,x,w,x,w,x,w,x,d,x,w,x,w,x,w,x,w'
             A='w,x,w,x,w,x,w,x,w,x'
             #txt='a,x,a'
             c1=txt.split(',')
@@ -42,6 +42,8 @@ def pickup_service_client(group_number, robot_name):
             for c in c1:
         
                 callback_move(c,80,45,0.50,0.5)
+            pwm_a.ChangeDutyCycle(0)
+            pwm_b.ChangeDutyCycle(0)
             #for c in c2:
         
              #   callback_move(c,100,40,0.50,0.4)
