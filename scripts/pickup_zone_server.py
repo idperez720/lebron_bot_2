@@ -4,7 +4,6 @@ from lebron_bot_2.srv import pickup_service, pickup_serviceResponse
 import rospy
 
 def handle_pickup_service(req):
-    print("hola")
     print(f'Returning: {req}')
     resp = pickup_serviceResponse()
     resp.answer.state = 1
