@@ -17,7 +17,7 @@ import cv2
 import editdistance
 from path import Path
 
-from dataloader_iam import DataLoaderIAM, Batch
+
 from model import Model, DecoderType
 from preprocessor import Preprocessor
 
@@ -467,87 +467,7 @@ def char_list_from_file() -> List[str]:
         return list(f.read())
 
 
-def train(model: Model,
-          loader: DataLoaderIAM,
-          line_mode: bool,
-          early_stopping: int = 25) -> None:
-    """Trains NN."""
-    epoch = 0  # number of training epochs since start
-    summary_char_error_rates = []
-    summary_word_accuracies = []
-    preprocessor = Preprocessor(get_img_size(line_mode), data_augmentation=True, line_mode=line_mode)
-    best_char_error_rate = float('inf')  # best validation character error rate
-    no_improvement_since = 0  # number of epochs no improvement of character error rate occurred
-    # stop training after this number of epochs without improvement
-    while True:
-        epoch += 1
-        print('Epoch:', epoch)
 
-        # train
-        print('Train NN')
-        loader.train_set()
-        while loader.has_next():
-            iter_info = loader.get_iterator_info()
-            batch = loader.get_next()
-            batch = preprocessor.process_batch(batch)
-            loss = model.train_batch(batch)
-            print(f'Epoch: {epoch} Batch: {iter_info[0]}/{iter_info[1]} Loss: {loss}')
-
-        # validate
-        char_error_rate, word_accuracy = validate(model, loader, line_mode)
-
-        # write summary
-        summary_char_error_rates.append(char_error_rate)
-        summary_word_accuracies.append(word_accuracy)
-        write_summary(summary_char_error_rates, summary_word_accuracies)
-
-        # if best validation accuracy so far, save model parameters
-        if char_error_rate < best_char_error_rate:
-            print('Character error rate improved, save model')
-            best_char_error_rate = char_error_rate
-            no_improvement_since = 0
-            model.save()
-        else:
-            print(f'Character error rate not improved, best so far: {char_error_rate * 100.0}%')
-            no_improvement_since += 1
-
-        # stop training if no more improvement in the last x epochs
-        if no_improvement_since >= early_stopping:
-            print(f'No more improvement since {early_stopping} epochs. Training stopped.')
-            break
-
-
-def validate(model: Model, loader: DataLoaderIAM, line_mode: bool) -> Tuple[float, float]:
-    """Validates NN."""
-    print('Validate NN')
-    loader.validation_set()
-    preprocessor = Preprocessor(get_img_size(line_mode), line_mode=line_mode)
-    num_char_err = 0
-    num_char_total = 0
-    num_word_ok = 0
-    num_word_total = 0
-    while loader.has_next():
-        iter_info = loader.get_iterator_info()
-        print(f'Batch: {iter_info[0]} / {iter_info[1]}')
-        batch = loader.get_next()
-        batch = preprocessor.process_batch(batch)
-        recognized, _ = model.infer_batch(batch)
-
-        print('Ground truth -> Recognized')
-        for i in range(len(recognized)):
-            num_word_ok += 1 if batch.gt_texts[i] == recognized[i] else 0
-            num_word_total += 1
-            dist = editdistance.eval(recognized[i], batch.gt_texts[i])
-            num_char_err += dist
-            num_char_total += len(batch.gt_texts[i])
-            print('[OK]' if dist == 0 else '[ERR:%d]' % dist, '"' + batch.gt_texts[i] + '"', '->',
-                  '"' + recognized[i] + '"')
-
-    # print validation result
-    char_error_rate = num_char_err / num_char_total
-    word_accuracy = num_word_ok / num_word_total
-    print(f'Character error rate: {char_error_rate * 100.0}%. Word accuracy: {word_accuracy * 100.0}%.')
-    return char_error_rate, word_accuracy
 
 
 def infer(model: Model, fn_img: Path) -> String:
