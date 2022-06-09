@@ -1,6 +1,7 @@
 import random
 from typing import Tuple
-
+import sys
+sys.path.append('/home/ivan/catkin_ws/src/lebron_bot_2/scripts')
 import cv2
 import numpy as np
 

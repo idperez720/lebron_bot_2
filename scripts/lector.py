@@ -2,6 +2,10 @@ import argparse
 import json
 import numpy as np
 import os
+import sys
+sys.path.append('/home/ivan/catkin_ws/src/lebron_bot_2/scripts')
+sys.path.append('/home/ivan/catkin_ws/src/lebron_bot_2/data')
+sys.path.append('/home/ivan/catkin_ws/src/lebron_bot_2/model')
 from typing import Tuple, List
 
 import cv2
@@ -13,12 +17,12 @@ from model import Model, DecoderType
 from preprocessor import Preprocessor
 
 
-
+messageB = ""
 class FilePaths:
     """Filenames and paths to data."""
-    fn_char_list = '../model/charList.txt'
-    fn_summary = '../model/summary.json'
-    fn_corpus = '../data/corpus.txt'
+    fn_char_list = '/home/ivan/catkin_ws/src/lebron_bot_2/model/charList.txt'
+    fn_summary = '/home/ivan/catkin_ws/src/lebron_bot_2//model/summary.json'
+    fn_corpus = '/home/ivan/catkin_ws/src/lebron_bot_2//data/corpus.txt'
 
 
 def get_img_height() -> int:
@@ -137,7 +141,8 @@ def infer(model: Model, fn_img: Path) -> None:
 
     batch = Batch([img], None, 1)
     recognized, probability = model.infer_batch(batch, True)
-    print(f'"{recognized[0]}"')
+    print(recognized[0])
+    return(recognized[0])
     print(f'Probability: {probability[0]}')
 
 
@@ -151,14 +156,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--data_dir', help='Directory containing IAM dataset.', type=Path, required=False)
     parser.add_argument('--fast', help='Load samples from LMDB.', action='store_true')
     parser.add_argument('--line_mode', help='Train to read text lines instead of single words.', action='store_true')
-    parser.add_argument('--img_file', help='Image used for inference.', type=Path, default='../data/word.png')
+    parser.add_argument('--img_file', help='Image used for inference.', type=Path, default='/home/ivan/catkin_ws/src/lebron_bot_2//data/word.png')
     parser.add_argument('--early_stopping', help='Early stopping epochs.', type=int, default=25)
     parser.add_argument('--dump', help='Dump output of NN to CSV file(s).', action='store_true')
 
     return parser.parse_args()
 
 def Mask():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture("/dev/video2")
     if not cap.isOpened():
         raise IOError("Cannot open webcam")
     def Contrastador(imagen):
@@ -174,9 +179,9 @@ def Mask():
         flipedrArray=np.fliplr(imageArray)
         flipudArray=np.flipud(imageArray)
         for i, j in np.ndindex(imageArray.shape):
-            if imageArray[i][j]>90:
+            if imageArray[i][j]>70:
                 imageArray[i, j] = 255
-            if imageArray[i][j]<90:
+            if imageArray[i][j]<70:
                 imageArray[i, j] = 0
     
         for j in range(imageArray.shape[1]):
@@ -213,9 +218,10 @@ def Mask():
         rangecol=int(col-columna1New)
     
         crop_img = imageArray[filaNew:rangefil, columnaNew:rangecol]
-        kernel = np.ones((3, 3), np.uint8)
+        kernel = np.ones((4, 4), np.uint8)
         imgMorph = cv2.erode(crop_img, kernel, iterations = 1)
     
+        print("Mask")
 
 
        
@@ -224,8 +230,9 @@ def Mask():
     # mask_gray = cv2.inRange(imageArray, lower_gray, upper_gray)
     # img_res = cv2.bitwise_and(img, img, mask = mask_gray)
         cv2.imshow('Logo OpenCV',imgMorph)
-        path = '/home/juan/Documents/MyCode/TextdetecTens/SimpleHTR/data'
+        path = '/home/ivan/catkin_ws/src/lebron_bot_2/data'
         cv2.imwrite(os.path.join(path , 'word.png'), imgMorph)
+        
     #cv2.imwrite('im.png', imageArray)
     
         t = cv2.waitKey(1)
@@ -247,7 +254,7 @@ def Mask():
 
 def main():
     """Main function."""
-
+    print("Main")
     # parse arguments and set CTC decoder
     args = parse_args()
     decoder_mapping = {'bestpath': DecoderType.BestPath,
@@ -282,8 +289,14 @@ def main():
 
     # infer text on test image
     elif args.mode == 'infer':
+        print()
         model = Model(char_list_from_file(), decoder_type, must_restore=True, dump=args.dump)
-        infer(model, args.img_file)
+        PalabraReconocida = infer(model, args.img_file)
+        print(PalabraReconocida)
+        
+    return(PalabraReconocida)
+        
+
 
 
 if __name__ == '__main__':

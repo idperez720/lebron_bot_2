@@ -4,9 +4,10 @@ from lebron_bot_2.srv import launch_auth_service, launch_auth_serviceResponse
 import rospy
 
 def handle_launch_auth_service(req):
-    print(f'Returning: {req}')
+    #print(f'Returning: {req}')
+    print(req.message_decode)
     resp = launch_auth_serviceResponse()
-    if req.message_decode == "Hola":
+    if req.message_decode == "Hoy":
         resp.auth = 1
     else:
         resp.auth = 0
